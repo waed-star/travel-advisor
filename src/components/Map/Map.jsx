@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import GoogleMapReact from 'google-map-react'
 import {Paper, Typography, useMediaQuery} from '@material-ui/core'
 import LocationOnOutlineIcon from '@material-ui/icons/LocationOnOutlined'
@@ -6,11 +6,9 @@ import Rating from '@material-ui/lab/Rating'
 
 import useStyles from './styles'
 
-const Map = ({ setCoordinates, setBounds, coordinates, places }) => {
+const Map = ({ setCoordinates, setBounds, coordinates, places, setChildClicked }) => {
   const classes = useStyles();
   const isDesktop = useMediaQuery('(min-width: 600px)') //Checks if the width is larger than 600px, returns bool
-
-  // const coordinates = { lat: 0, lng: 0}
 
   return (
     <div className={classes.mapContainer}>
@@ -26,11 +24,12 @@ const Map = ({ setCoordinates, setBounds, coordinates, places }) => {
           setCoordinates({ lat: event.center.lat, lng: event.center.lng })
           setBounds({ ne: event.marginBounds.ne, sw: event.marginBounds.sw })
         }}
-        onChildClick={''} //used for any click on restaurants on the map
+        onChildClick={( child ) => {setChildClicked(child)}} //used for any click on restaurants on the map
       >
         {
           places?.map((place, index) => (
             <div
+              key={index}
               className={classes.markerContainer}
               lat={Number(place.latitude)}
               lng={Number(place.longitude)}
