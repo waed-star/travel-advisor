@@ -18,7 +18,7 @@ const Header = () => {
           <Typography variant='h6' className={classes.title}>
             Explore new places
           </Typography>
-          {/* <Autocomplete> */}
+          {/* <Autocomplete onLoad={onLoad} onPlaceChanged={''}> */}
             <div className={classes.search}>
               <div className={classes.searchIcon}>
                 <SearchIcon />

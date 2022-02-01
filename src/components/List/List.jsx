@@ -5,14 +5,12 @@ import PlaceDetails from '../PlaceDetails/PlaceDetails'
 
 import useStyles from './styles'
 
-const List = ({ places, childClicked, isLoading }) => {
-  const classes = useStyles();
-  const [type, setType] = useState('Restaurants')
-  const [rating, setRating] = useState('')
+const List = ({ places, childClicked, isLoading, setType, type, rating, setRating }) => {
+  const classes = useStyles()
   const [elementRefs, setElementRefs] = useState([])
 
   useEffect(() => {
-    setElementRefs((refs) => Array(places.length).fill().map((_, i) => refs[i] || createRef()))
+    setElementRefs((refs) => Array(places?.length).fill().map((_, i) => refs[i] || createRef()))
   }, [places])
 
   return (
@@ -29,15 +27,15 @@ const List = ({ places, childClicked, isLoading }) => {
           <FormControl className={classes.formControl}>
             <InputLabel>Type</InputLabel>
             <Select value={type} onChange={(event) => setType(event.target.value)}>
-              <MenuItem value="Restaurants">Restaurants</MenuItem>
-              <MenuItem value="Hotels">Hotels</MenuItem>
-              <MenuItem value="Attractions">Attractions</MenuItem>
+              <MenuItem value="restaurants">Restaurants</MenuItem>
+              <MenuItem value="hotels">Hotels</MenuItem>
+              <MenuItem value="attractions">Attractions</MenuItem>
             </Select>
           </FormControl>
           <FormControl className={classes.formControl}>
             <InputLabel>Rating</InputLabel>
-            <Select value={rating} onChange={(event) => setRating(event.target.value)}>
-              <MenuItem value={0}>All</MenuItem>
+            <Select id="rating" value={rating} onChange={(event) => setRating(event.target.value)}>
+              <MenuItem value="">All</MenuItem>
               <MenuItem value={3}>Above 3.0</MenuItem>
               <MenuItem value={4}>Above 4.0</MenuItem>
               <MenuItem value={4.5}>Above 4.5</MenuItem>
