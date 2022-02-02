@@ -13,6 +13,9 @@ const App = () => {
   const [ bounds, setBounds ] = useState({})
   const [ childClicked, setChildClicked ] = useState(null)
   const [ isLoading, setIsLoading] = useState(false)
+  const [ type, setType ] = useState('restaurants')
+  const [ rating, setRating ] = useState('')
+  const [ filteredPlaces, setFilteredPlaces ] = useState([])
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(({ coords: {latitude, longitude} }) => {
@@ -21,14 +24,19 @@ const App = () => {
   }, [])
 
   useEffect(() => {
+    const filteredPlaces = places?.filter((place) => place.rating > rating)
+    setFilteredPlaces(filteredPlaces)
+  }, [ rating ])
+
+  useEffect(() => {
       setIsLoading(true)
-      getPlacesData(bounds.sw, bounds.ne)
+      getPlacesData(type, bounds.sw, bounds.ne)
       .then((data) => {
         setPlaces(data)
-        console.log(data)
+        setFilteredPlaces([])
         setIsLoading(false)
       })
-  }, [coordinates, bounds]); {/* For data to be passed from child to parent, it has been called here*/}
+  }, [ type, coordinates, bounds ]); {/* For data to be passed from child to parent, it has been called here*/}
 
   return (
     <>
@@ -37,9 +45,13 @@ const App = () => {
       <Grid container spacing={3} style={{ width: '100%'}}>
         <Grid item xs={12} md={4}>
           <List
-            places={places}
+            places={filteredPlaces.lenght ? filteredPlaces : places}
             childClicked={childClicked}
             isLoading={isLoading}
+            setType={setType}
+            type={type}
+            setRating={setRating}
+            rating={rating}
           />
         </Grid>
         <Grid item xs={12} md={8}>
@@ -47,7 +59,7 @@ const App = () => {
             setCoordinates={setCoordinates}
             setBounds={setBounds}
             coordinates={coordinates}
-            places={places}
+            places={filteredPlaces.lenght ? filteredPlaces : places}
             setChildClicked={setChildClicked}
           />
         </Grid>
