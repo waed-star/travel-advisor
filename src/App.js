@@ -5,10 +5,12 @@ import Header from './components/Header/Header'
 import List from './components/List/List'
 import Map from './components/Map/Map'
 
-import { getPlacesData } from './api'
+import { getPlacesData, getWeatherData } from './api'
+import { NotificationsPausedSharp } from '@material-ui/icons'
 
 const App = () => {
   const [ places, setPlaces ] = useState([])
+  const [ weatherData, setWeatherData ] = useState([])
   const [ coordinates, setCoordinates ] = useState({})
   const [ bounds, setBounds ] = useState({})
   const [ childClicked, setChildClicked ] = useState(null)
@@ -29,19 +31,24 @@ const App = () => {
   }, [ rating ])
 
   useEffect(() => {
-      setIsLoading(true)
-      getPlacesData(type, bounds.sw, bounds.ne)
-      .then((data) => {
-        setPlaces(data)
-        setFilteredPlaces([])
-        setIsLoading(false)
-      })
-  }, [ type, coordinates, bounds ]); {/* For data to be passed from child to parent, it has been called here*/}
+      if (bounds.sw && bounds.ne) {
+        setIsLoading(true)
+        getWeatherData(coordinates.lat, coordinates.lng)
+          .then((data) => setWeatherData(data))
+
+        getPlacesData(type, bounds.sw, bounds.ne)
+          .then((data) => {
+            setPlaces(data?.filter((place) => place.name && place.num_reviews > 0))
+            setFilteredPlaces([])
+            setIsLoading(false)
+          })
+      }
+  }, [ type, bounds ]);
 
   return (
     <>
       <CssBaseline />
-      <Header />
+      <Header setCoordinates={setCoordinates} />
       <Grid container spacing={3} style={{ width: '100%'}}>
         <Grid item xs={12} md={4}>
           <List
@@ -61,6 +68,7 @@ const App = () => {
             coordinates={coordinates}
             places={filteredPlaces.lenght ? filteredPlaces : places}
             setChildClicked={setChildClicked}
+            weatherData={weatherData}
           />
         </Grid>
       </Grid>
